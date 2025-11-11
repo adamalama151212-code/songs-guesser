@@ -64,6 +64,9 @@ docker-compose up --build
 
 ![App Screenshot 1](flutter_01.png)
 ![App Screenshot 2](flutter_02.png)
+Level functionality still in progress...
+![App Screenshot 3](flutter_03.png)
+Score Screen still in progress...
 
 ## 🎯 For Recruiters
 
