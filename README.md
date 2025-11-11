@@ -1,43 +1,101 @@
-# Song Guesser
+# 🎵 Songs Guesser - Multi-track Music Guessing Game
 
-Aplikacja muzyczna do zgadywania utworów z możliwością odtwarzania różnych ścieżek instrumentalnych.
+A full-stack music guessing game where players listen to individual instrument tracks and guess the song title.
 
-## Funkcjonalności
+## 📱 Project Architecture
 
-- 🎵 **Odtwarzanie wielościeżkowe**: 4 niezależne suwaki audio (główna ścieżka + 3 dodatkowe instrumenty)
-- 🎸 **Inteligentne przypisywanie instrumentów**: Automatyczne rozpoznawanie i przypisywanie percussion, bass, rhythm guitar, lead guitar
-- 👨‍🎤 **Biblioteka artystów**: AC/DC, John Mayer i inni wykonawcy
-- 🎛️ **Kontrola głośności**: Indywidualna regulacja każdej ścieżki audio
-- 📱 **Responsywny interfejs**: Nowoczesny UI z gradientami i animacjami
+This project consists of two main repositories:
 
-## Technologie
+### 🎨 **Frontend - Flutter Mobile App**
+- **Repository:** [songs-guesser](https://github.com/adamalama151212-code/songs-guesser) *(current repo)*
+- **Tech Stack:** Flutter, Dart, audioplayers
+- **Features:** 
+  - Multi-instrument audio playback (drums, bass, rhythm/lead guitar)
+  - Artist selection with custom images
+  - Responsive UI with gradient design
+  - Real-time audio controls
 
-- **Frontend**: Flutter, Dart
-- **Audio**: audioplayers package
-- **Backend**: Flask (Python) + SQLite
-- **Hosting audio**: GitHub raw files
-- **Architektura**: Modułowe widgety, StreamBuilder pattern
+### 🔧 **Backend - REST API Server**
+- **Repository:** [songs-guesser-api](https://github.com/adamalama151212-code/songs-guesser-api)
+- **Tech Stack:** Python Flask, SQLite, Docker, Docker Compose
+- **Features:**
+  - RESTful API for song management
+  - Artist and song metadata handling
+  - SQLite database for lightweight data storage
+  - Docker containerization with docker-compose
+  - Python Flask web framework
 
-## Struktura projektu
+## 🎮 How It Works
 
+1. **Select Artist** - Choose from various rock/pop artists (AC/DC, Queen, John Mayer, etc.)
+2. **Pick Difficulty** - Select game difficulty level
+3. **Listen & Guess** - Play individual instrument tracks and guess the song
+4. **Multi-track Audio** - Each song has separate tracks for percussion, bass, rhythm guitar, and lead guitar
+
+## � Quick Start
+
+### Frontend (Flutter App)
+```bash
+git clone https://github.com/adamalama151212-code/songs-guesser.git
+cd songs-guesser
+flutter pub get
+flutter run
 ```
-lib/
-├── main.dart                 # Punkt wejścia aplikacji
-├── app.dart                  # Główny widget i routing
-├── start_screen.dart         # Ekran startowy
-├── artists_screen.dart       # Wybór artysty
-├── difficulty_level.dart     # Wybór poziomu trudności
-├── final_game_screen.dart    # Główny ekran gry z audio
-├── info_screen.dart          # Informacje o grze
-├── services/
-│   └── artist_service.dart   # Komunikacja z backend API
-└── widgets/
-    ├── additional_audio_slider.dart  # Suwak dodatkowych ścieżek audio
-    ├── artist_header.dart           # Nagłówek z informacjami o artyście
-    ├── back_button.dart             # Przycisk nawigacji wstecznej  
-    ├── main_audio_slider.dart       # Główny suwak audio z kontrolami
-    └── song_input.dart              # Pole tekstowe do wprowadzania tytułu
+
+### Backend (Flask API Server)
+```bash
+git clone https://github.com/adamalama151212-code/songs-guesser-api.git
+cd songs-guesser-api
+docker-compose up --build
+# API will be available at http://localhost:5000
 ```
+
+## 🛠️ Technical Highlights
+
+- **Clean Architecture:** Modular widget system with reusable components
+- **Audio Optimization:** Lightweight audio service without over-engineering
+- **Responsive Design:** Consistent UI across different screen sizes
+- **Flask API:** RESTful endpoints for song and artist management
+- **SQLite Integration:** Lightweight database for metadata storage
+- **Docker Deployment:** Full containerization with docker-compose
+- **Professional Git Workflow:** Separate repositories for frontend and backend
+
+## 📸 Screenshots
+
+![App Screenshot 1](flutter_01.png)
+![App Screenshot 2](flutter_02.png)
+
+## 🎯 For Recruiters
+
+This project demonstrates:
+
+- **Full-stack development** skills (Flutter + Flask API)
+- **Mobile app development** with Flutter/Dart
+- **RESTful API design** with Python Flask
+- **Database integration** with SQLite
+- **Docker containerization** and docker-compose orchestration
+- **Clean code architecture** and project organization
+- **Git workflow** and repository management
+- **Audio streaming** and real-time audio controls
+
+### 💼 **Perfect for CV:**
+```
+🎵 Songs Guesser - Full Stack Music Game
+Frontend (Flutter): github.com/adamalama151212-code/songs-guesser
+Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
+• Multi-track audio streaming • RESTful API • Docker deployment • SQLite database
+```
+
+## 🛠️ Tech Stack Summary
+
+| Component | Technology |
+|-----------|------------|
+| **Frontend** | Flutter, Dart, audioplayers |
+| **Backend** | Python Flask, SQLite |
+| **Containerization** | Docker, Docker Compose |
+| **Audio Storage** | GitHub raw files |
+| **Database** | SQLite |
+| **API** | RESTful endpoints |
 
 ## Instalacja
 
