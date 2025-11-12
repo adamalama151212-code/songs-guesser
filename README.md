@@ -99,6 +99,22 @@ Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
 | **Audio Storage**   | GitHub raw files            |
 | **Database**        | SQLite                      |
 | **API**             | RESTful endpoints           |
+| **Audio Processing**| Moises.ai (track separation)|
+
+## 🎵 Audio Production Workflow
+
+The multi-track audio files were created using professional audio processing:
+
+- **🎤 Source:** Original songs from artists (AC/DC, Queen, John Mayer, etc.)
+- **🔧 Processing:** [Moises.ai](https://moises.ai) - AI-powered audio track separation
+- **📁 Output:** Individual instrument tracks:
+  - `percussion[SongName].mp3` - Drums and percussion
+  - `bass[SongName].mp3` - Bass guitar and low frequencies  
+  - `rhythm[SongName].mp3` - Rhythm guitar and chords
+  - `lead[SongName].mp3` - Lead guitar and solos
+- **☁️ Storage:** GitHub raw files for reliable streaming
+
+This approach allows players to hear individual instrument parts, making the guessing game both educational and entertaining for music enthusiasts.
 
 ## Instalacja
 
