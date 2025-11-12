@@ -32,6 +32,16 @@ This project consists of two main repositories:
 3. **Listen & Guess** - Play individual instrument tracks and guess the song
 4. **Multi-track Audio** - Each song has separate tracks for percussion, bass, rhythm guitar, and lead guitar
 
+## 📦 Audio Storage with Git LFS
+
+All multi-track audio files (`.mp3`) are hosted on GitHub using Git Large File Storage (LFS). This ensures reliable streaming and proper versioning of large audio files.
+
+**Note:** To clone/download the audio files, make sure you have [Git LFS](https://git-lfs.github.com/) installed and initialized:
+```bash
+git lfs install
+git clone https://github.com/adamalama151212-code/songs-guesser.git
+```
+
 ## � Quick Start
 
 ### Frontend (Flutter App)
@@ -105,14 +115,10 @@ Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
 
 The multi-track audio files were created using professional audio processing:
 
-- **🎤 Source:** Original songs from artists (AC/DC, Queen, John Mayer, etc.)
-- **🔧 Processing:** [Moises.ai](https://moises.ai) - AI-powered audio track separation
-- **📁 Output:** Individual instrument tracks:
   - `percussion[SongName].mp3` - Drums and percussion
   - `bass[SongName].mp3` - Bass guitar and low frequencies  
   - `rhythm[SongName].mp3` - Rhythm guitar and chords
   - `lead[SongName].mp3` - Lead guitar and solos
-- **☁️ Storage:** GitHub raw files for reliable streaming
 
 This approach allows players to hear individual instrument parts, making the guessing game both educational and entertaining for music enthusiasts.
 
@@ -127,10 +133,12 @@ This approach allows players to hear individual instrument parts, making the gue
 ## Backend API
 
 Backend wymaga Flask servera z endpointami:
-- `/artists` - lista artystów
-- `/songs/by-artist` - piosenki dla konkretnego artysty
-- `/songs/all-by-artist` - wszystkie piosenki artysty
 
 Pliki audio hostowane na GitHub w formacie: `[instrument][songname].mp3`
 
-Aplikacje powstała dzieki niesamowitej współpracy człowieka(backend) i sztucznej inteligencji(frontend) XDD 
+
+**Note:** 
+The application was created thanks to an amazing collaboration between a human and artificial intelligence.
+Aplikacja powstała dzięki niesamowitej współpracy człowieka i sztucznej inteligencji
+
+Selected elements of this project (audio service logic, error handling, UI refactoring, and code optimizations) were created with the support of generative AI
