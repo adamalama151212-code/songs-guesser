@@ -115,10 +115,14 @@ Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
 
 The multi-track audio files were created using professional audio processing:
 
+- **🎤 Source:** Original songs from artists (AC/DC, Queen, John Mayer, etc.)
+- **🔧 Processing:** [Moises.ai](https://moises.ai) - AI-powered audio track separation
+- **📁 Output:** Individual instrument tracks:
   - `percussion[SongName].mp3` - Drums and percussion
   - `bass[SongName].mp3` - Bass guitar and low frequencies  
   - `rhythm[SongName].mp3` - Rhythm guitar and chords
   - `lead[SongName].mp3` - Lead guitar and solos
+- **☁️ Storage:** GitHub raw files for reliable streaming
 
 This approach allows players to hear individual instrument parts, making the guessing game both educational and entertaining for music enthusiasts.
 
@@ -133,12 +137,16 @@ This approach allows players to hear individual instrument parts, making the gue
 ## Backend API
 
 Backend wymaga Flask servera z endpointami:
+- `/artists` - lista artystów
+- `/songs/by-artist` - piosenki dla konkretnego artysty
+- `/songs/all-by-artist` - wszystkie piosenki artysty
+- `/songs/isolated-tracks` - zwraca nazwy plików audio dla każdego instrumentu (percussion, bass, rhythm, lead), potrzebne do zbudowania linku do pliku na GitHub LFS
 
 Pliki audio hostowane na GitHub w formacie: `[instrument][songname].mp3`
 
 
 **Note:** 
-The application was created thanks to an amazing collaboration between a human and artificial intelligence.
+
 Aplikacja powstała dzięki niesamowitej współpracy człowieka i sztucznej inteligencji
 
 Selected elements of this project (audio service logic, error handling, UI refactoring, and code optimizations) were created with the support of generative AI
