@@ -15,19 +15,20 @@ class ArtistHeader extends StatelessWidget {
   /// Mapowanie nazw artystów na ścieżki do obrazów
   String _getArtistImagePath() {
     final Map<String, String> artistImages = {
-      'AC/DC': 'assets/images/acdc.png',
-      'John Mayer': 'assets/images/john_mayer.png',
-      'Metallica': 'assets/images/metallica.png',
-      'Queen': 'assets/images/queen.png',
-      'The Beatles': 'assets/images/the_beatles.png',
-      'Pink Floyd': 'assets/images/pink_floyd.png',
-      'Nirvana': 'assets/images/nirvana.png',
-      'Aerosmith': 'assets/images/aerosmith.png',
-      'ZZ Top': 'assets/images/zz_top.png',
-      'Gary Moore': 'assets/images/gary_moore.png',
+      'ac/dc': 'assets/images/acdc.png',
+      'john mayer': 'assets/images/john_mayer.png',
+      'metallica': 'assets/images/metallica.png',
+      'queen': 'assets/images/queen.png',
+      'the beatles': 'assets/images/the_beatles.png',
+      'pink floyd': 'assets/images/pink_floyd.png',
+      'prince': 'assets/images/prince.png',
+      'aerosmith': 'assets/images/aerosmith.png',
+      'zz top': 'assets/images/zz_top.png',
+      'gary moore': 'assets/images/gary_moore.png',
     };
 
-    return artistImages[artistName] ?? 'assets/images/songGuesserLogo.png';
+    final normalizedName = artistName.toLowerCase();
+    return artistImages[normalizedName] ?? 'assets/images/songGuesserLogo.png';
   }
 
   @override

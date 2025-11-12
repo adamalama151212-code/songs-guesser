@@ -169,4 +169,47 @@ class ArtistService {
       throw Exception('Error getting songs: $e');
     }
   }
+
+  /// Pobiera izolowane ścieżki audio dla konkretnej piosenki i artysty
+  static Future<Map<String, String>> getIsolatedTracks(
+    String artistName,
+    String songName,
+  ) async {
+    try {
+      final uri = Uri.parse('${_resolveBaseUrl()}/songs/isolated-tracks');
+      
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({
+          'artist_name': artistName,
+          'song_name': songName,
+        }),
+      ).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final body = utf8.decode(response.bodyBytes);
+        final data = json.decode(body);
+        
+        if (data is Map && data['tracks'] is Map) {
+          final tracks = data['tracks'] as Map<String, dynamic>;
+          return Map<String, String>.from(tracks);
+        }
+        
+        return {};
+      }
+
+      throw Exception(
+        'Failed to get isolated tracks: ${response.statusCode} ${response.reasonPhrase}',
+      );
+    } catch (e) {
+      if (e is TimeoutException) {
+        throw Exception('Request to get isolated tracks timed out.');
+      }
+      throw Exception('Error getting isolated tracks: $e');
+    }
+  }
 }

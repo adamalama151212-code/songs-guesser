@@ -8,11 +8,13 @@ import 'widgets/back_button.dart';
 
 class FinalGameScreen extends StatefulWidget {
   final String selectedArtist;
+  final String selectedDifficulty;
   final void Function() onBack;
 
   const FinalGameScreen({
-    super.key, 
+    super.key,
     required this.selectedArtist,
+    required this.selectedDifficulty,
     required this.onBack,
   });
 
@@ -24,12 +26,24 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
   final TextEditingController _textController = TextEditingController();
   final List<AudioPlayer> _players = [];
   List<String> _songNames = [];
-  
+  Map<String, String> _isolatedTracks = {}; // track_type -> filename
+  String _currentSong = '';
+
   // Status każdego playera
   final List<bool> _isPlaying = [false, false, false, false];
   final List<bool> _isLoading = [false, false, false, false];
-  final List<Duration> _currentPosition = [Duration.zero, Duration.zero, Duration.zero, Duration.zero];
-  final List<Duration> _totalDuration = [Duration.zero, Duration.zero, Duration.zero, Duration.zero];
+  final List<Duration> _currentPosition = [
+    Duration.zero,
+    Duration.zero,
+    Duration.zero,
+    Duration.zero,
+  ];
+  final List<Duration> _totalDuration = [
+    Duration.zero,
+    Duration.zero,
+    Duration.zero,
+    Duration.zero,
+  ];
 
   @override
   void initState() {
@@ -39,11 +53,30 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
   }
 
   Future<void> _initializePlayers() async {
+    // Wyczyść istniejące players przed tworzeniem nowych
+    for (final player in _players) {
+      try {
+        await player.stop();
+        await player.dispose();
+      } catch (e) {
+        print('⚠️ Error disposing player: $e');
+      }
+    }
+    _players.clear();
+
+    // Reset state arrays
+    for (int i = 0; i < _isLoading.length; i++) {
+      _isLoading[i] = false;
+      _isPlaying[i] = false;
+      _currentPosition[i] = Duration.zero;
+      _totalDuration[i] = Duration.zero;
+    }
+
     // Tworzymy 4 playery (jeden na każdy instrument)
     for (int i = 0; i < 4; i++) {
       final player = AudioPlayer();
       _players.add(player);
-      
+
       // Listener dla pozycji
       player.onPositionChanged.listen((position) {
         if (mounted) {
@@ -52,7 +85,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
           });
         }
       });
-      
+
       // Listener dla duration
       player.onDurationChanged.listen((duration) {
         if (mounted) {
@@ -61,7 +94,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
           });
         }
       });
-      
+
       // Listener dla stanu
       player.onPlayerStateChanged.listen((state) {
         if (mounted) {
@@ -70,7 +103,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
           });
         }
       });
-      
+
       SimpleAudioService().setupPlayerQuality(player);
     }
   }
@@ -86,26 +119,76 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
   }
 
   Future<void> _loadSongs() async {
+    // Reset loading state when switching songs/artists
+    setState(() {
+      for (int i = 0; i < _isLoading.length; i++) {
+        _isLoading[i] = false;
+      }
+    });
+
     try {
       print('🔄 Loading songs for artist: ${widget.selectedArtist}');
-      
+
       try {
-        final songList = await ArtistService.getAllSongsByArtist(widget.selectedArtist);
-        setState(() {
-          _songNames = songList.isNotEmpty ? songList : ['percussion.mp3', 'bass.mp3', 'rhythm.mp3', 'lead.mp3'];
-        });
-        print('✅ Loaded ${_songNames.length} songs: $_songNames');
+        // 1. Pobierz listę piosenek dla artysty
+        final songList = await ArtistService.getAllSongsByArtist(
+          widget.selectedArtist,
+        );
+
+        if (songList.isNotEmpty) {
+          // 2. Wybierz pierwszą piosenkę (lub losową)
+          final selectedSong = songList.first;
+
+          // 3. Pobierz izolowane ścieżki dla tej piosenki
+          final tracks = await ArtistService.getIsolatedTracks(
+            widget.selectedArtist,
+            selectedSong,
+          );
+
+          // Sprawdź czy wszystkie wymagane ścieżki są dostępne
+          final requiredTracks = ['percussion', 'bass', 'rhythm', 'lead'];
+          final missingTracks = requiredTracks
+              .where((track) => tracks[track] == null || tracks[track]!.isEmpty)
+              .toList();
+
+          if (missingTracks.isNotEmpty) {
+            // Pokaż alert o brakujących ścieżkach
+            _showMissingTracksDialog(selectedSong, missingTracks);
+            return;
+          }
+
+          setState(() {
+            _currentSong = selectedSong;
+            _isolatedTracks = tracks;
+            // WAŻNE: Kolejność musi być zgodna z przyciskami UI!
+            // UI: ['Percussion', 'Bass Line', 'Rhythm Guitar', 'Lead Guitar']
+            _songNames = [
+              tracks['percussion']!, // Index 0 = Percussion button
+              tracks['bass']!, // Index 1 = Bass Line button
+              tracks['rhythm']!, // Index 2 = Rhythm Guitar button
+              tracks['lead']!, // Index 3 = Lead Guitar button
+            ];
+          });
+          print(
+            '🎵 Mapped tracks: Percussion=${_songNames[0]}, Bass=${_songNames[1]}, Rhythm=${_songNames[2]}, Lead=${_songNames[3]}',
+          );
+          print('✅ Loaded song "$selectedSong" with tracks: $tracks');
+
+          // Preload audio sources to help emulator
+          _preloadAllAudioSources();
+        } else {
+          _showNoSongsDialog();
+          return;
+        }
       } catch (e) {
-        print('⚠️ Failed to load artist songs, using defaults');
-        setState(() {
-          _songNames = ['percussion.mp3', 'bass.mp3', 'rhythm.mp3', 'lead.mp3'];
-        });
+        print('⚠️ Failed to load from database: $e');
+        _showDatabaseErrorDialog(e.toString());
+        return;
       }
     } catch (e) {
       print('❌ Complete song loading failed: $e');
-      setState(() {
-        _songNames = ['percussion.mp3', 'bass.mp3', 'rhythm.mp3', 'lead.mp3'];
-      });
+      _showDatabaseErrorDialog(e.toString());
+      return;
     }
   }
 
@@ -122,38 +205,210 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
         return 'Lead Guitar';
       }
     }
-    
+
     final names = ['Percussion', 'Bass Line', 'Rhythm Guitar', 'Lead Guitar'];
     return names[index % names.length];
   }
 
   Future<void> _togglePlay(int index) async {
-    if (_isLoading[index] || index >= _songNames.length) return;
-    
-    setState(() {
-      _isLoading[index] = true;
-    });
+    if (!mounted ||
+        _isLoading[index] ||
+        index >= _songNames.length ||
+        index >= _players.length) {
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading[index] = true;
+      });
+    }
 
     try {
       if (_isPlaying[index]) {
-        await _players[index].pause();
+        await _players[index].pause().timeout(const Duration(seconds: 5));
       } else {
         final fileName = _songNames[index];
-        final url = 'https://raw.githubusercontent.com/adamalama151212-code/songs/main/$fileName';
-        
+        final url =
+            'https://raw.githubusercontent.com/adamalama151212-code/songs/main/$fileName';
+
+        print('🎵 Attempting to play: $fileName');
+        print('🔗 Full URL: $url');
+
         if (_currentPosition[index] == Duration.zero) {
-          await SimpleAudioService().playFromUrl(_players[index], url);
+          print('🚀 Starting fresh playback for $fileName');
+          await SimpleAudioService()
+              .playFromUrl(_players[index], url)
+              .timeout(const Duration(seconds: 30));
         } else {
-          await _players[index].resume();
+          print('▶️ Resuming playback for $fileName');
+          await _players[index].resume().timeout(const Duration(seconds: 5));
         }
       }
     } catch (e) {
       print('❌ Failed to toggle play for ${_songNames[index]}: $e');
+      // Force reset loading state on any error
+      if (mounted) {
+        setState(() {
+          _isLoading[index] = false;
+        });
+      }
     } finally {
-      setState(() {
-        _isLoading[index] = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading[index] = false;
+        });
+      }
     }
+  }
+
+  /// Preload all audio sources to help emulator
+  void _preloadAllAudioSources() async {
+    print('🔄 Preloading audio sources...');
+    for (int i = 0; i < _songNames.length; i++) {
+      final fileName = _songNames[i];
+      final url =
+          'https://raw.githubusercontent.com/adamalama151212-code/songs/main/$fileName';
+      try {
+        print('📡 Preloading: $fileName');
+        // Set source without playing to cache it
+        await _players[i]
+            .setSource(UrlSource(url))
+            .timeout(Duration(seconds: 5));
+        print('✅ Preloaded: $fileName');
+      } catch (e) {
+        print('⚠️ Preload failed for $fileName: $e');
+      }
+      // Small delay between preloads
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+    print('🎯 Audio preloading complete');
+  }
+
+  /// Wyświetla dialog o brakujących ścieżkach audio
+  void _showMissingTracksDialog(String songName, List<String> missingTracks) {
+    final trackNames = {
+      'percussion': 'Perkusja',
+      'bass': 'Bas',
+      'rhythm': 'Gitara rytmiczna',
+      'lead': 'Gitara prowadząca',
+    };
+
+    final missingNames = missingTracks
+        .map((track) => trackNames[track] ?? track)
+        .join(', ');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 30, 30, 45),
+          title: const Text(
+            'Brak ścieżek audio',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Dla utworu "$songName" brakuje następujących ścieżek:\n\n$missingNames\n\nSkontaktuj się z administratorem lub wybierz inny utwór.',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Opcjonalnie: wróć do poprzedniego ekranu
+                widget.onBack();
+              },
+              child: const Text(
+                'Wróć',
+                style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Wyświetla dialog gdy nie ma utworów dla artysty
+  void _showNoSongsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 30, 30, 45),
+          title: const Text(
+            'Brak utworów',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Nie znaleziono utworów dla artysty "${widget.selectedArtist}".\n\nMożliwe przyczyny:\n• Artysta nie ma dodanych utworów\n• Problem z połączeniem z bazą danych\n• Błąd serwera',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.onBack();
+              },
+              child: const Text(
+                'Wróć do wyboru artysty',
+                style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Wyświetla dialog błędu bazy danych
+  void _showDatabaseErrorDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 30, 30, 45),
+          title: const Text(
+            'Błąd połączenia',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Wystąpił problem z połączeniem z bazą danych.\n\nBłąd: $error\n\nSpróbuj ponownie za chwilę lub skontaktuj się z administratorem.',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Spróbuj ponownie załadować
+                _loadSongs();
+              },
+              child: const Text(
+                'Spróbuj ponownie',
+                style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.onBack();
+              },
+              child: const Text(
+                'Wróć',
+                style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String _formatDuration(Duration duration) {
@@ -179,7 +434,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
 
   Widget _buildInstrumentSlider(int index) {
     final instrumentName = _getInstrumentName(index);
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Column(
@@ -207,17 +462,22 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
                     activeTrackColor: const Color.fromARGB(255, 120, 140, 255),
                     inactiveTrackColor: Colors.white.withOpacity(0.3),
                     thumbColor: const Color.fromARGB(255, 120, 140, 255),
-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 8,
+                    ),
                     trackHeight: 4,
                   ),
                   child: Slider(
                     value: _totalDuration[index].inMilliseconds > 0
-                        ? _currentPosition[index].inMilliseconds / _totalDuration[index].inMilliseconds
+                        ? _currentPosition[index].inMilliseconds /
+                              _totalDuration[index].inMilliseconds
                         : 0.0,
                     onChanged: (value) {
                       if (_totalDuration[index].inMilliseconds > 0) {
                         final position = Duration(
-                          milliseconds: (value * _totalDuration[index].inMilliseconds).round(),
+                          milliseconds:
+                              (value * _totalDuration[index].inMilliseconds)
+                                  .round(),
                         );
                         _players[index].seek(position);
                       }
@@ -309,7 +569,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -319,11 +579,11 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
                   // Header with artist info
                   _buildHeader(),
                   const SizedBox(height: 30),
-                  
+
                   // Text input
                   _buildTextInput(),
                   const SizedBox(height: 30),
-                  
+
                   // Audio players
                   Expanded(
                     child: Padding(
@@ -331,17 +591,16 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            for (int i = 0; i < 4; i++) _buildInstrumentSlider(i),
+                            for (int i = 0; i < 4; i++)
+                              _buildInstrumentSlider(i),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  
+
                   // Back button
-                  CustomBackButton(
-                    onPressed: widget.onBack,
-                  ),
+                  CustomBackButton(onPressed: widget.onBack),
                   const SizedBox(height: 16),
                 ],
               ),

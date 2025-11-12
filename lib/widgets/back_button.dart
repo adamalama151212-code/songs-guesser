@@ -3,14 +3,9 @@ import 'package:flutter/material.dart';
 /// Przycisk "Back" z ikoną strzałki
 /// Stylowany przycisk do nawigacji wstecznej
 class CustomBackButton extends StatelessWidget {
-  const CustomBackButton({
-    required this.onPressed,
-    this.text = 'Back',
-    super.key,
-  });
+  const CustomBackButton({required this.onPressed, super.key});
 
   final VoidCallback onPressed;
-  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +17,10 @@ class CustomBackButton extends StatelessWidget {
           foregroundColor: const Color.fromARGB(255, 190, 143, 252),
           backgroundColor: Colors.black.withOpacity(0.4),
           side: const BorderSide(color: Colors.white, width: 1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         icon: const Icon(Icons.arrow_back, size: 20),
-        label: Text(text, style: const TextStyle(fontSize: 16)),
+        label: const Text('Back', style: TextStyle(fontSize: 16)),
       ),
     );
   }

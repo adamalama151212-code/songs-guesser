@@ -78,6 +78,7 @@ class _AppState extends State<App> {
     } else if (activeScreen == 'final-game-screen') {
       screenWidget = FinalGameScreen(
         selectedArtist: _selectedArtistForGame!,
+        selectedDifficulty: _selectedDifficulty!,
         onBack: goBackToDifficulty,
       );
     }

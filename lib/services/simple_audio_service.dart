@@ -6,15 +6,41 @@ class SimpleAudioService {
   factory SimpleAudioService() => _instance;
   SimpleAudioService._internal();
 
-  /// Proste odtwarzanie z URL
+  /// Proste odtwarzanie z URL z retry logic
   Future<void> playFromUrl(AudioPlayer player, String url) async {
-    try {
-      print('🎵 Playing: ${url.split('/').last}');
-      await player.stop();
-      await player.play(UrlSource(url));
-    } catch (e) {
-      print('❌ Failed to play $url: $e');
-      throw e;
+    int attempts = 0;
+    const maxAttempts = 3;
+    
+    while (attempts < maxAttempts) {
+      try {
+        attempts++;
+        print('🎵 Playing: ${url.split('/').last} (attempt $attempts/$maxAttempts)');
+        
+        await player.stop();
+        await player.play(UrlSource(url));
+        
+        // Czekamy chwilę aby sprawdzić czy audio się załadowało
+        await Future.delayed(const Duration(milliseconds: 1000));
+        
+        final state = player.state;
+        if (state == PlayerState.playing || state == PlayerState.paused) {
+          print('✅ Successfully loaded: ${url.split('/').last}');
+          return; // Sukces!
+        } else {
+          throw Exception('Player state is $state after loading');
+        }
+        
+      } catch (e) {
+        print('❌ Attempt $attempts failed for $url: $e');
+        
+        if (attempts >= maxAttempts) {
+          print('💀 All attempts failed for $url');
+          throw e;
+        } else {
+          print('🔄 Retrying in 1 second...');
+          await Future.delayed(const Duration(seconds: 1));
+        }
+      }
     }
   }
 

@@ -53,6 +53,16 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final backButtonStyle = ElevatedButton.styleFrom(
+      fixedSize: const Size(200, 40),
+      foregroundColor: Color.fromARGB(255, 190, 143, 252),
+      backgroundColor: Colors.black.withOpacity(0.4),
+      side: const BorderSide(color: Colors.white, width: 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(8),
+      ),
+    );
+
     // Obsługa stanu ładowania
     if (_isLoading) {
       return Center(
@@ -181,8 +191,11 @@ class _GameScreenState extends State<GameScreen> {
         const SizedBox(height: 20),
 
         // Przycisk powrotu (Home)
-        CustomBackButton(
+        ElevatedButton.icon(
           onPressed: widget.onBack,
+          style: backButtonStyle,
+          label: const Text('Back', style: TextStyle(fontSize: 16)),
+          icon: const Icon(Icons.home, size: 20),
         ),
       ],
     );
