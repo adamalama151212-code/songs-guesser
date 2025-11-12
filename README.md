@@ -147,6 +147,5 @@ Pliki audio hostowane na GitHub w formacie: `[instrument][songname].mp3`
 
 **Note:** 
 
-Aplikacja powstała dzięki niesamowitej współpracy człowieka i sztucznej inteligencji
 
 Selected elements of this project (audio service logic, error handling, UI refactoring, and code optimizations) were created with the support of generative AI
