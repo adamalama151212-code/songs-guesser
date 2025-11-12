@@ -26,8 +26,10 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
   final TextEditingController _textController = TextEditingController();
   final List<AudioPlayer> _players = [];
   List<String> _songNames = [];
+  List<String> _songTitles = [];
   Map<String, String> _isolatedTracks = {}; // track_type -> filename
   String _currentSong = '';
+  final List<String> userAnswers = [];
 
   // Status każdego playera
   final List<bool> _isPlaying = [false, false, false, false];
@@ -136,8 +138,11 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
         );
 
         if (songList.isNotEmpty) {
-          // 2. Wybierz pierwszą piosenkę (lub losową)
-          final selectedSong = songList.first;
+          setState(() {
+            _songTitles = songList;
+          });
+          // 2. Wybierz losową piosenkę
+          final selectedSong = (songList..shuffle()).first;
 
           // 3. Pobierz izolowane ścieżki dla tej piosenki
           final tracks = await ArtistService.getIsolatedTracks(
@@ -427,8 +432,11 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
     return SongInput(
       controller: _textController,
       onSubmitted: (value) {
-        // Tutaj można dodać logikę automatycznego sprawdzania przy wciśnięciu Enter
+        // Możesz dodać dodatkową logikę, np. walidację
       },
+      onNextSong: _loadSongs,
+      userAnswers: userAnswers,
+      songList: _songTitles,
     );
   }
 
