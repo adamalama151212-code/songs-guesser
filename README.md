@@ -28,7 +28,7 @@ This project consists of two main repositories:
 ## 🎮 How It Works
 
 1. **Select Artist** - Choose from various rock/pop artists (AC/DC, Queen, John Mayer, etc.)
-2. **Pick Difficulty** - Select game difficulty level
+2. **Pick Difficulty** - Select game difficulty level (soon...)
 3. **Listen & Guess** - Play individual instrument tracks and guess the song
 4. **Multi-track Audio** - Each song has separate tracks for percussion, bass, rhythm guitar, and lead guitar
 
@@ -70,7 +70,7 @@ Score Screen still in progress...
 
 ## 🎯 For Recruiters
 
-This project demonstrates:
+This project is not finished but, demonstrates:
 
 - **Full-stack development** skills (Flutter + Flask API)
 - **Mobile app development** with Flutter/Dart
@@ -91,14 +91,14 @@ Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
 
 ## 🛠️ Tech Stack Summary
 
-| Component | Technology |
-|-----------|------------|
-| **Frontend** | Flutter, Dart, audioplayers |
-| **Backend** | Python Flask, SQLite |
-| **Containerization** | Docker, Docker Compose |
-| **Audio Storage** | GitHub raw files |
-| **Database** | SQLite |
-| **API** | RESTful endpoints |
+| Component           | Technology                  |
+|---------------------|-----------------------------|
+| **Frontend**        | Flutter, Dart, audioplayers |
+| **Backend**         | Python Flask, SQLite        |
+| **Containerization**| Docker, Docker Compose      |
+| **Audio Storage**   | GitHub raw files            |
+| **Database**        | SQLite                      |
+| **API**             | RESTful endpoints           |
 
 ## Instalacja
 
@@ -116,3 +116,5 @@ Backend wymaga Flask servera z endpointami:
 - `/songs/all-by-artist` - wszystkie piosenki artysty
 
 Pliki audio hostowane na GitHub w formacie: `[instrument][songname].mp3`
+
+Aplikacje powstała dzieki niesamowitej współpracy człowieka(backend) i sztucznej inteligencji(frontend) XDD 
