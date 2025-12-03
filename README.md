@@ -57,8 +57,8 @@ docker-compose up --build
 ## 🛠️ Technical Highlights
 
 - **Clean Architecture:** Modular widget system with reusable components
-- **Audio Optimization:** Lightweight audio service without over-engineering
 - **Responsive Design:** Consistent UI across different screen sizes
+- Cloudflare R2 Integration: Scalable object storage for efficient, high-performance audio streaming.
 - **Flask API:** RESTful endpoints for song and artist management
 - **SQLite Integration:** Lightweight database for metadata storage
 - **Docker Deployment:** Full containerization with docker-compose
@@ -85,14 +85,6 @@ This project is not finished but, demonstrates:
 - **Git workflow** and repository management
 - **Audio streaming** and real-time audio controls
 
-### 💼 **Perfect for CV:**
-```
-🎵 Songs Guesser - Full Stack Music Game
-Frontend (Flutter): github.com/adamalama151212-code/songs-guesser
-Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
-• Multi-track audio streaming • RESTful API • Docker deployment • SQLite database
-```
-
 ## 🛠️ Tech Stack Summary
 
 | Component           | Technology                  |
@@ -100,7 +92,7 @@ Backend (Flask+Docker): github.com/adamalama151212-code/songs-guesser-api
 | **Frontend**        | Flutter, Dart, audioplayers |
 | **Backend**         | Python Flask, SQLite        |
 | **Containerization**| Docker, Docker Compose      |
-| **Audio Storage**   | GitHub raw files            |
+| **Audio Storage**   | CloudFlare R2               |
 | **Database**        | SQLite                      |
 | **API**             | RESTful endpoints           |
 | **Audio Processing**| Moises.ai (track separation)|
@@ -116,30 +108,28 @@ The multi-track audio files were created using professional audio processing:
   - `bass[SongName].mp3` - Bass guitar and low frequencies  
   - `rhythm[SongName].mp3` - Rhythm guitar and chords
   - `lead[SongName].mp3` - Lead guitar and solos
-- **☁️ Storage:** GitHub raw files for reliable streaming
+- **☁️ Storage:** CloudFlare R2 for reliable streaming
 
 This approach allows players to hear individual instrument parts, making the guessing game both educational and entertaining for music enthusiasts.
 
-## Instalacja
+## Installation
 
-1. Zainstaluj Flutter SDK
-2. Sklonuj repozytorium
-3. Uruchom: `flutter pub get`
-4. Uruchom backend API (Flask)
-5. Uruchom aplikację: `flutter run`
+1. Install the Flutter SDK
+2. Clone the repository
+3. Run: `flutter pub get`
+4. Start the backend API (Flask)
+5. Run the app: `flutter run`
 
 ## Backend API
 
-Backend wymaga Flask servera z endpointami:
-- `/artists` - lista artystów
-- `/songs/by-artist` - piosenki dla konkretnego artysty
-- `/songs/all-by-artist` - wszystkie piosenki artysty
-- `/songs/isolated-tracks` - zwraca nazwy plików audio dla każdego instrumentu (percussion, bass, rhythm, lead), potrzebne do zbudowania linku do pliku na GitHub LFS
+The backend requires a Flask server with the following endpoints:
+- `/artists` - list of artists
+- `/songs/by-artist` - songs for a specific artist
+- `/songs/all-by-artist` - all songs by an artist
+- `/songs/isolated-tracks` - returns audio filenames for individual instruments (percussion, bass, rhythm, lead), used to construct Cloudflare R2 links
 
-Pliki audio hostowane na GitHub w formacie: `[instrument][songname].mp3`
-
+Audio files are hosted on Cloudflare R2 using the format: `[instrument][songname].mp3`
 
 **Note:** 
-
 
 Selected elements of this project (audio service logic, error handling, UI refactoring, and code optimizations) were created with the support of generative AI
