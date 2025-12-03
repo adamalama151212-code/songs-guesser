@@ -79,7 +79,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
       final player = AudioPlayer();
       _players.add(player);
 
-      // Listener dla pozycji
+      // Listener for position
       player.onPositionChanged.listen((position) {
         if (mounted) {
           setState(() {
@@ -88,7 +88,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
         }
       });
 
-      // Listener dla duration
+      // Listener for duration
       player.onDurationChanged.listen((duration) {
         if (mounted) {
           setState(() {
@@ -97,7 +97,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
         }
       });
 
-      // Listener dla stanu
+      // Listener for state
       player.onPlayerStateChanged.listen((state) {
         if (mounted) {
           setState(() {
@@ -130,7 +130,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
       print('🔄 Loading songs for artist: ${widget.selectedArtist}');
 
       try {
-        // 1. Pobierz listę piosenek dla artysty
+        // 1. download song list for the artist
         final songList = await ArtistService.getAllSongsByArtist(
           widget.selectedArtist,
         );
@@ -139,16 +139,16 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
           setState(() {
             _songTitles = songList;
           });
-          // 2. Wybierz losową piosenkę
+          // 2. choose a random song
           final selectedSong = (songList..shuffle()).first;
 
-          // 3. Pobierz izolowane ścieżki dla tej piosenki
+          // 3. download isolated tracks for this song
           final tracks = await ArtistService.getIsolatedTracks(
             widget.selectedArtist,
             selectedSong,
           );
 
-          // Sprawdź czy wszystkie wymagane ścieżki są dostępne
+          // Check if all required tracks are available
           final requiredTracks = ['percussion', 'bass', 'rhythm', 'lead'];
           final missingTracks = requiredTracks
               .where((track) => tracks[track] == null || tracks[track]!.isEmpty)
@@ -163,7 +163,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
           setState(() {
             _currentSong = selectedSong;
             _isolatedTracks = tracks;
-            // WAŻNE: Kolejność musi być zgodna z przyciskami UI!
+            // IMPORTANT: Order must match UI buttons!
             // UI: ['Percussion', 'Bass Line', 'Rhythm Guitar', 'Lead Guitar']
             _songNames = [
               tracks['percussion']!, // Index 0 = Percussion button
@@ -233,7 +233,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
       } else {
         final fileName = _songNames[index];
         final url =
-            'https://raw.githubusercontent.com/adamalama151212-code/songs/main/$fileName';
+            'https://pub-6c7ccaaab93b4b0493dc62cfb6c8ab91.r2.dev/$fileName';
 
         // if the track has finished playing, restart from beginning
         if (_currentPosition[index] >= _totalDuration[index] &&
@@ -276,7 +276,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
     for (int i = 0; i < _songNames.length; i++) {
       final fileName = _songNames[i];
       final url =
-          'https://raw.githubusercontent.com/adamalama151212-code/songs/main/$fileName';
+          'https://pub-6c7ccaaab93b4b0493dc62cfb6c8ab91.r2.dev/$fileName';
       try {
         print('📡 Preloading: $fileName');
         // Set source without playing to cache it
@@ -293,7 +293,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
     print('🎯 Audio preloading complete');
   }
 
-  /// Wyświetla dialog o brakujących ścieżkach audio
+  /// Shows a dialog about missing audio tracks
   void _showMissingTracksDialog(String songName, List<String> missingTracks) {
     final trackNames = {
       'percussion': 'Perkusja',
@@ -323,11 +323,11 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Opcjonalnie: wróć do poprzedniego ekranu
+                // Optionally: go back to the previous screen
                 widget.onBack();
               },
               child: const Text(
-                'Wróć',
+                'Back',
                 style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
               ),
             ),
@@ -344,7 +344,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
     );
   }
 
-  /// Wyświetla dialog gdy nie ma utworów dla artysty
+  /// Shows a dialog when there are no songs for the artist
   void _showNoSongsDialog() {
     showDialog(
       context: context,
@@ -376,7 +376,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
     );
   }
 
-  /// Wyświetla dialog błędu bazy danych
+  /// Shows a dialog for database connection errors
   void _showDatabaseErrorDialog(String error) {
     showDialog(
       context: context,
@@ -395,11 +395,11 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Spróbuj ponownie załadować
+                // Try reloading
                 _loadSongs();
               },
               child: const Text(
-                'Spróbuj ponownie',
+                'Try again',
                 style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
               ),
             ),
@@ -409,7 +409,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
                 widget.onBack();
               },
               child: const Text(
-                'Wróć',
+                'Back',
                 style: TextStyle(color: Color.fromARGB(255, 120, 140, 255)),
               ),
             ),
@@ -435,7 +435,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
     return SongInput(
       controller: _textController,
       onSubmitted: (value) {
-        // Możesz dodać dodatkową logikę, np. walidację
+        // You can add additional logic, e.g., validation
       },
       onNextSong: _loadSongs,
       userAnswers: userAnswers,
@@ -570,7 +570,7 @@ class _FinalGameScreenState extends State<FinalGameScreen> {
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Stack(
         children: [
-          // Gradient tła - identyczne z resztą aplikacji
+          // gradient background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
