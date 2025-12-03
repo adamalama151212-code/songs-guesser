@@ -32,15 +32,9 @@ This project consists of two main repositories:
 3. **Listen & Guess** - Play individual instrument tracks and guess the song
 4. **Multi-track Audio** - Each song has separate tracks for percussion, bass, rhythm guitar, and lead guitar
 
-## 📦 Audio Storage with Git LFS
+## 📦 Audio Storage with CloudFlare R2
 
-All multi-track audio files (`.mp3`) are hosted on GitHub using Git Large File Storage (LFS). This ensures reliable streaming and proper versioning of large audio files.
-
-**Note:** To clone/download the audio files, make sure you have [Git LFS](https://git-lfs.github.com/) installed and initialized:
-```bash
-git lfs install
-git clone https://github.com/adamalama151212-code/songs-guesser.git
-```
+All multi-track audio files (`.mp3`) are hosted on CloudFlare. This ensures reliable streaming and proper versioning of large audio files.
 
 ## � Quick Start
 
