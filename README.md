@@ -68,13 +68,11 @@ docker-compose up --build
 
 ![App Screenshot 1](flutter_01.png)
 ![App Screenshot 2](flutter_02.png)
-Level functionality still in progress...
 ![App Screenshot 3](flutter_03.png)
-Score Screen still in progress...
 
 ## 🎯 For Recruiters
 
-This project is not finished but, demonstrates:
+Key Engineering Concepts Demonstrated::
 
 - **Full-stack development** skills (Flutter + Flask API)
 - **Mobile app development** with Flutter/Dart
@@ -130,6 +128,4 @@ The backend requires a Flask server with the following endpoints:
 
 Audio files are hosted on Cloudflare R2 using the format: `[instrument][songname].mp3`
 
-**Note:** 
-
-Selected elements of this project (audio service logic, error handling, UI refactoring, and code optimizations) were created with the support of generative AI
+🤖 Note on AI Usage: Generative AI tools were primarily used to accelerate Frontend (Flutter UI) development and boilerplate generation. The Backend logic, API architecture, and Data Infrastructure were implemented and verified manually to ensure control over data flow and processing.
